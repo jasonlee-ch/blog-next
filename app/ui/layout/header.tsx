@@ -19,9 +19,9 @@ export default function Header() {
 
   const route = usePathname();
   return (
-    <header className="w-full border-b bg-white px-4 py-4 text-center text-2xl font-bold text-gray-800">
-      My Blog
-      <TabNav.Root>
+    <header className="w-full px-4 py-4 text-center text-2xl font-bold text-gray-800">
+      Jason&apos;s Blog
+      <TabNav.Root justify="end">
         {
           routes.map(({path, name}) => (
             <TabNav.Link key={path} href={path} active={route === path}>
@@ -30,7 +30,7 @@ export default function Header() {
           ))
         }
       </TabNav.Root>
-      <ThemePanel></ThemePanel>
+      {/* <ThemePanel></ThemePanel> */}
     </header>
   );
 }

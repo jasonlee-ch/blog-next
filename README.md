@@ -6,6 +6,17 @@
 - UI框架搭建 0.3pd
   - 顶部导航栏：tab（首页，新建），主题设置
   - 底部导航：相关信息，快捷link
+
+
+todo： 
+- 鉴权完善：
+  - github登录鉴权（登录，信息获取 - email之类）
+  - 登录页完善
+- 数据接入
+  - 表结构生成：Prisma + postgresSQL
+
+
+
 - 静态列表和详情页
   - 静态列表：
     - mock静态列表数据
@@ -20,9 +31,7 @@
 - 创建blog页
   - markdown编辑器
   - markdown实时预览
-- 数据接入
-  - 表结构生成：Prisma + postgresSQL
-  - 接口替换真实数据
+
 - 优化
   - 空数据，异常状态，loading态
   - SEO优化
