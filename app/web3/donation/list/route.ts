@@ -1,8 +1,8 @@
-import { Donation } from '@/types/Donation';
+import { Donation } from '@/types/donation';
 import { BeggingContractConfig } from '@/web3/contract-config';
 import { createServerViemClient } from '@/web3/server-client';
 
-async function getDonationData(): Promise<Donation[]> {
+async function getDonationData(): Promise<Donation<bigint>[]> {
   const client = createServerViemClient();
 
   // 获取所有 Donation 事件

@@ -1,7 +1,7 @@
 "use client";
 
 import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
+// import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Header from '@/app/ui/layout/header';
 import Footer from '@/app/ui/layout/footer';
@@ -11,17 +11,8 @@ import { ThemeProvider } from 'next-themes';
 import { WagmiProvider } from 'wagmi';
 import { config } from '@/web3/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
-
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
+import { GeistSans } from 'geist/font/sans';
+import { GeistMono } from 'geist/font/mono';
 
 // export const metadata: Metadata = {
 //   title: 'Create Next App',
@@ -39,7 +30,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col min-h-screen`}
+        className={`${GeistSans.variable} ${GeistMono.variable} antialiased flex flex-col min-h-screen`}
       >
         {/* wagmi 全局上下文注入 */}
         <WagmiProvider config={config}>

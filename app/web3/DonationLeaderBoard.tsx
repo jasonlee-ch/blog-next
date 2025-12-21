@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Donation } from '@/types/Donation';
+import { Donation } from '@/types/donation';
 import { BeggingContractConfig } from '@/web3/contract-config';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { formatEther, parseEther, isAddress } from 'viem';
@@ -9,7 +9,7 @@ import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
 import { Avatar, Box, Button, Card, Dialog, Flex, Text, TextField, Callout } from '@radix-ui/themes';
 
 // 获取并处理捐赠数据
-async function getDonationData(): Promise<Donation[]> {
+async function getDonationData(): Promise<Donation<string>[]> {
   // 请求我们在服务器上创建的 API 路由
   const response = await fetch('/web3/donation/list');
 
@@ -18,7 +18,6 @@ async function getDonationData(): Promise<Donation[]> {
   }
 
   const data = await response.json();
-  // API 返回的数据结构是 { donations: Donation[] }
   return data.donations;
 }
 
