@@ -44,3 +44,31 @@ todo：
   - 阅读时长统计
   - 学习时间轴
   - 移动端适配
+
+
+
+## 问题：
+- supabase 是企业级处理方案吗
+- 在next中，如果使用了supabase，哪些提交/查询操作需要新增接口，哪些可以直接在组件内直接写
+- use client使用的场景除了使用到一些浏览器API，还有哪些场景
+- 怎么实现局部组件之间共享样式集合
+  ```css
+  @layer components {
+    .btn-primary {
+      @apply bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors;
+    }
+    .btn-secondary {
+      @apply bg-gray-200 text-gray-800 px-4 py-2 rounded-lg hover:bg-gray-300 transition-colors;
+    }
+  }
+  ```
+
+  ```jsx
+  import styles from './xx.module.css'
+
+  export default function Button() {
+
+    return (<div className={styles.btnPrimary}></div>)
+  }
+  ```
+- tailwind utilities 配置不生效

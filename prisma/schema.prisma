@@ -1,0 +1,81 @@
+generator client {
+  provider = "prisma-client-js"
+  output          = "../generated/prisma"
+  engineType      = "client" // enable Prisma ORM without Rust
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// 对应 public.users 表
+model User {
+  id          String    @id @db.Uuid // 对应 auth.users.id
+  email       String?
+  username    String?   @unique
+  displayName String?   @map("display_name")
+  avatarUrl   String?   @map("avatar_url")
+  bio         String?
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("users")
+}
+
+/// 对应 public.user_profiles 表
+model UserProfile {
+  id          String    @id @db.Uuid // 对应 auth.users.id
+  username    String    @unique
+  displayName String?   @map("display_name")
+  avatarUrl   String?   @map("avatar_url")
+  bio         String?
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt   DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+
+  @@map("user_profiles")
+}
+
+/// 对应 public.posts 表
+model Post {
+  id        String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  title     String
+  slug      String   @unique
+  content   String
+  excerpt   String?
+  authorId  String   @map("author_id") @db.Uuid // 关联到 auth.users
+  published Boolean? @default(false)
+  isPublic  Boolean? @default(false) @map("is_public")
+  createdAt DateTime? @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime? @default(now()) @map("updated_at") @db.Timestamptz
+
+  // 关系
+  categories PostCategory[]
+
+  @@map("posts")
+}
+
+/// 对应 public.categories 表
+model Category {
+  id          String   @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  name        String   @unique
+  slug        String   @unique
+  description String?
+  createdAt   DateTime? @default(now()) @map("created_at") @db.Timestamptz
+
+  posts PostCategory[]
+
+  @@map("categories")
+}
+
+/// 对应 public.post_categories 中间表
+model PostCategory {
+  postId     String   @map("post_id") @db.Uuid
+  categoryId String   @map("category_id") @db.Uuid
+
+  post     Post     @relation(fields: [postId], references: [id], onDelete: Cascade)
+  category Category @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+
+  @@id([postId, categoryId])
+  @@map("post_categories")
+}

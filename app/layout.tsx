@@ -13,6 +13,7 @@ import { config } from '@/web3/config';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
+import { AuthProvider } from '@/providers/auth-provider';
 
 // export const metadata: Metadata = {
 //   title: 'Create Next App',
@@ -37,11 +38,13 @@ export default function RootLayout({
           {/* react-query全局上下文注入 */}
           <QueryClientProvider client={queryClient}>
           <ThemeProvider>
-            <Theme className="flex flex-1 flex-col">
-              <Header />
-              <div className="flex-1">{children}</div>
-              <Footer />
-            </Theme>
+            <AuthProvider>
+              <Theme className="flex flex-1 flex-col">
+                <Header />
+                <div className="flex-1">{children}</div>
+                <Footer />
+              </Theme>
+            </AuthProvider>
           </ThemeProvider>
           </QueryClientProvider>
         </WagmiProvider>
