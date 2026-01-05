@@ -6,13 +6,12 @@ import { useRouter } from 'next/navigation';
 import { Button, TextField, Text, Flex, Dialog, TextArea } from '@radix-ui/themes';
 import { Category } from '@/types';
 import { PlusIcon } from '@radix-ui/react-icons';
+import { useToast } from '@/providers/toast-provider';
 
 export default function CreateCategory({
   onCreateSuc,
-  // children,
 }: {
   onCreateSuc: (cate: Category) => void,
-  // children: React.ReactNode;
 }) {
   const [isOpen, setIsOpen] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -21,6 +20,8 @@ export default function CreateCategory({
 
   const router = useRouter();
   const supabase = getSupabaseClient();
+
+  const { showToast } = useToast();
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -44,10 +45,12 @@ export default function CreateCategory({
       .single();
 
     if (error) {
-      alert('创建分类失败: ' + error.message);
+      showToast(`创建失败，请稍后重试`, 'error');
+      console.error('创建失败，请稍后重试', error?.message);
     } else {
       onCreateSuc(data);
       setIsOpen(false);
+      showToast(`创建成功`, 'success');
       router.refresh(); // 刷新服务端数据
     }
     setLoading(false);

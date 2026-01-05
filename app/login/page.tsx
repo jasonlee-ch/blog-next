@@ -6,6 +6,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import NextLink from 'next/link';
 import { Button, Card, Link as RadixLink, TextField, Text, Flex, Heading, Separator, Box } from '@radix-ui/themes';
 import { GitHubLogoIcon } from '@radix-ui/react-icons';
+import { useToast } from '@/providers/toast-provider';
 
 export default function Login() {
   const [email, setEmail] = useState("")
@@ -15,7 +16,7 @@ export default function Login() {
   const { signIn, signInWithGitHub } = useAuth()
   const router = useRouter()
   const searchParams = useSearchParams()
-  // const { toast } = useToast()
+  const { showToast } = useToast()
 
   // 检查URL中是否有错误参数
   const error = searchParams.get("error")
@@ -26,7 +27,8 @@ export default function Login() {
     //   description: error,
     //   variant: "destructive",
     // })
-    console.error("登录失败:", error)
+
+    showToast('登录失败', 'error')
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -37,11 +39,7 @@ export default function Login() {
       const { error } = await signIn(email, password)
 
       if (error) {
-        // toast({
-        //   title: "登录失败",
-        //   description: error.message,
-        //   variant: "destructive",
-        // })
+        showToast('登录失败', 'error')
         console.error("登录失败:", error.message)
         return
       }
@@ -50,8 +48,8 @@ export default function Login() {
       //   title: "登录成功",
       //   description: "欢迎回来！",
       // })
+      showToast('登录成功', 'success');
 
-      console.log("登录成功")
 
       router.push("/")
       router.refresh()
@@ -61,6 +59,7 @@ export default function Login() {
       //   description: "发生了未知错误，请稍后再试",
       //   variant: "destructive",
       // })
+      showToast('登录失败,发生了未知错误，请稍后再试', 'error');
       console.error('登录失败:', error)
     } finally {
       setIsLoading(false)
@@ -74,19 +73,13 @@ export default function Login() {
       const { error } = await signInWithGitHub()
 
       if (error) {
-        // toast({
-        //   title: "GitHub 登录失败",
-        //   description: error.message,
-        //   variant: "destructive",
-        // })
+        showToast('GitHub 登录失败', 'error');
         console.error("GitHub 登录失败:", error.message)
+        return;
       }
+      showToast('GitHub 登录成功', 'success');
     } catch (error) {
-      // toast({
-      //   title: "GitHub 登录失败",
-      //   description: "发生了未知错误，请稍后再试",
-      //   variant: "destructive",
-      // })
+      showToast('GitHub 登录失败', 'error');
       console.error('登录失败:', error)
     } finally {
       setIsGitHubLoading(false)

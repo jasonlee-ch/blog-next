@@ -8,8 +8,8 @@ export default async function CategoriesPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="container mx-auto py-5 px-4">
-      <CategoryList initialCategories={categories || []} />
-    </div>
+    // <div className="container mx-auto py-5 px-4">
+    <CategoryList initialCategories={categories || []} />
+    // </div>
   );
 }

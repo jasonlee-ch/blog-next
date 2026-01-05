@@ -3,8 +3,8 @@
 import type { Metadata } from 'next';
 // import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
-import Header from '@/app/ui/layout/header';
-import Footer from '@/app/ui/layout/footer';
+import Header from '@/components/layout/header';
+import Footer from '@/components/layout/footer';
 import '@radix-ui/themes/styles.css';
 import { Theme } from '@radix-ui/themes';
 import { ThemeProvider } from 'next-themes';
@@ -14,6 +14,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { GeistSans } from 'geist/font/sans';
 import { GeistMono } from 'geist/font/mono';
 import { AuthProvider } from '@/providers/auth-provider';
+import { ToastProvider } from '@/providers/toast-provider';
 
 // export const metadata: Metadata = {
 //   title: 'Create Next App',
@@ -40,9 +41,11 @@ export default function RootLayout({
           <ThemeProvider>
             <AuthProvider>
               <Theme className="flex flex-1 flex-col">
-                <Header />
-                <div className="flex-1">{children}</div>
-                <Footer />
+                <ToastProvider>
+                  <Header />
+                  <div className="flex-1 container mx-auto py-5 px-4">{children}</div>
+                  <Footer />
+                </ToastProvider>
               </Theme>
             </AuthProvider>
           </ThemeProvider>

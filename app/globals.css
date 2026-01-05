@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "normalize.css";
 
 /* @tailwind base;
 @tailwind components; */
@@ -77,127 +78,115 @@
   }
 } */
 
-/* 代码高亮样式 */
-pre {
-  position: relative;
-  background-color: #1e1e1e !important;
-  overflow-x: auto;
-  border-radius: 0.375rem;
-  padding: 1rem !important;
-  margin: 1.5rem 0 !important;
-}
 
-pre code {
-  background-color: transparent !important;
-  padding: 0 !important;
-  font-size: 0.875rem !important;
-  line-height: 1.5 !important;
-  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
-  color: #d4d4d4 !important;
-}
+/* 预设 Markdown 样式：使用类嵌套写法，放入 @layer components 层级 */
+@layer components {
+  .markdown-preview {
+    /* 全局容器样式 */
+    @apply px-4 py-6 text-gray-800 dark:text-gray-200 leading-relaxed;
 
-/* 代码块样式 */
-.code-block {
-  margin: 1.5rem 0;
-  padding-top: 2.5rem !important;
-}
+    /* 嵌套：标题样式（h1-h6 直接嵌套在 .markdown 下） */
+    h1 {
+      @apply text-3xl md:text-4xl font-bold mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2;
+    }
+    h2 {
+      @apply text-2xl md:text-3xl font-semibold mt-7 mb-3 border-b border-gray-200 dark:border-gray-700 pb-1;
+    }
+    h3 {
+      @apply text-xl md:text-2xl font-semibold mt-6 mb-3;
+    }
+    h4 {
+      @apply text-lg md:text-xl font-semibold mt-5 mb-2;
+    }
+    h5,
+    h6 {
+      @apply text-base md:text-lg font-semibold mt-4 mb-2;
+    }
 
-/* 高亮文本样式 */
-mark,
-.highlight {
-  background-color: rgba(250, 204, 21, 0.4);
-  padding: 0.1em 0.2em;
-  border-radius: 0.2em;
-}
+    /* 嵌套：段落样式 */
+    p {
+      @apply my-4 text-base;
+    }
 
-/* 引用块样式 */
-blockquote {
-  border-left-color: hsl(var(--primary)) !important;
-  background-color: hsl(var(--muted));
-  padding: 1rem 1.5rem !important;
-  border-radius: 0.375rem;
-}
+    /* 嵌套：链接样式 */
+    a {
+      @apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline decoration-1 underline-offset-2;
+    }
 
-/* 表格样式 */
-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 1.5rem 0;
-}
+    /* 嵌套：粗体、斜体样式 */
+    strong {
+      @apply font-bold;
+    }
+    em {
+      @apply italic text-gray-700 dark:text-gray-300;
+    }
 
-table th,
-table td {
-  padding: 0.75rem;
-  border: 1px solid hsl(var(--border));
-}
+    /* 嵌套：列表样式（包含嵌套列表） */
+    ul {
+      @apply my-4 pl-6 list-disc space-y-1;
 
-table th {
-  background-color: hsl(var(--muted));
-  font-weight: 600;
-}
+      /* 深层嵌套：列表内的子列表（ul/ol） */
+      ul,
+      ol {
+        @apply my-1 pl-6;
+      }
+    }
+    ol {
+      @apply my-4 pl-6 list-decimal space-y-1;
 
-/* 响应式图片 */
-.prose img {
-  max-width: 100%;
-  height: auto;
-  border-radius: 0.375rem;
-}
+      /* 深层嵌套：列表内的子列表（ul/ol） */
+      ul,
+      ol {
+        @apply my-1 pl-6;
+      }
+    }
 
-/* 代码语法高亮 - 基本样式 */
-.hljs-keyword,
-.hljs-selector-tag,
-.hljs-built_in,
-.hljs-name,
-.hljs-tag {
-  color: #569cd6;
-}
+    /* 嵌套：引用样式 */
+    blockquote {
+      @apply my-5 pl-4 border-l-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 py-2 px-3 italic text-gray-700 dark:text-gray-300;
+    }
 
-.hljs-string,
-.hljs-title,
-.hljs-section,
-.hljs-attribute,
-.hljs-literal,
-.hljs-template-tag,
-.hljs-template-variable,
-.hljs-type,
-.hljs-addition {
-  color: #ce9178;
-}
+    /* 嵌套：代码块 + 行内代码样式 */
+    pre {
+      @apply my-5 p-4 rounded-lg bg-gray-900 dark:bg-gray-800 overflow-x-auto;
 
-.hljs-comment,
-.hljs-quote,
-.hljs-deletion {
-  color: #6a9955;
-}
+      /* 嵌套：代码块内的 code 标签 */
+      code {
+        @apply text-sm text-gray-100 dark:text-gray-100;
+      }
+    }
+    /* 行内代码（p/li 内的 code 标签） */
+    p > code,
+    li > code {
+      @apply bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm;
+    }
 
-.hljs-number,
-.hljs-regexp,
-.hljs-literal,
-.hljs-bullet,
-.hljs-link {
-  color: #b5cea8;
-}
+    /* 嵌套：表格样式 */
+    table {
+      @apply my-6 w-full border-collapse border border-gray-300 dark:border-gray-700;
 
-.hljs-variable,
-.hljs-template-variable,
-.hljs-attr,
-.hljs-selector-attr,
-.hljs-selector-class,
-.hljs-selector-id {
-  color: #9cdcfe;
-}
+      /* 嵌套：表头 th */
+      th {
+        @apply bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 px-4 py-2 font-semibold text-left;
+      }
+      /* 嵌套：表格单元格 td */
+      td {
+        @apply border border-gray-300 dark:border-gray-700 px-4 py-2;
+      }
+      /* 嵌套：偶数行背景 */
+      tr:nth-child(even) {
+        @apply bg-gray-50 dark:bg-gray-900/50;
+      }
+    }
 
-.hljs-function,
-.hljs-subst {
-  color: #dcdcaa;
-}
+    /* 嵌套：分隔线样式 */
+    hr {
+      @apply my-8 border-gray-200 dark:border-gray-700;
+    }
 
-.hljs-operator,
-.hljs-entity,
-.hljs-url {
-  color: #d4d4d4;
-}
-
-.hljs-punctuation {
-  color: #d4d4d4;
+    /* 嵌套：图片样式 */
+    img {
+      @apply my-6 rounded-lg max-w-full h-auto shadow-sm;
+    }
+  }
 }

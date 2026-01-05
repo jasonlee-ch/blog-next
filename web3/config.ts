@@ -1,8 +1,7 @@
 import { createConfig, http } from 'wagmi'
 import { mainnet, sepolia } from 'wagmi/chains'
 import { PROVIDERS } from './providers';
-import { createClient } from 'viem'
-import { metaMask, injected, coinbaseWallet, walletConnect } from 'wagmi/connectors';
+import { metaMask, injected } from 'wagmi/connectors';
 
 // 方法一：
 export const config = createConfig({

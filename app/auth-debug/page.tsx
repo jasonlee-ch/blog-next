@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
-// import { useToast } from "@/hooks/use-toast"
+import { useToast } from "@/providers/toast-provider"
 import Link from "next/link"
 import { Card, Button } from "@radix-ui/themes"
 
@@ -10,7 +10,7 @@ export default function AuthDebugPage() {
   const [authConfig, setAuthConfig] = useState<any>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
-  // const { toast } = useToast()
+  const { showToast } = useToast()
   const supabase = getSupabaseClient()
 
   useEffect(() => {
@@ -49,6 +49,8 @@ export default function AuthDebugPage() {
 
       if (error) throw error
 
+      showToast('登录成功', 'success');
+
       // 登录成功，用户将被重定向
     } catch (error: any) {
       // toast({
@@ -56,6 +58,7 @@ export default function AuthDebugPage() {
       //   description: error.message || "GitHub 登录过程中发生错误",
       //   variant: "destructive",
       // })
+      showToast('登录失败', 'error');
       console.error("GitHub 登录失败:", error.message || error)
     }
   }

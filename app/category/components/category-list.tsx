@@ -35,11 +35,12 @@ export default function CategoryManager({
       </div>
 
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        {/* 创建卡片 */}
         <CreateCategory
           onCreateSuc={(cate) => setCategories([...categories, cate])}
         >
-          {/* <CategoryCard></CategoryCard> */}
         </CreateCategory>
+        {/* 展示卡片 */}
         {filteredCategories.map((category) => (
           <CategoryCard key={category.slug} category={category} />
         ))}
