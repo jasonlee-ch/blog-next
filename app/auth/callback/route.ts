@@ -16,11 +16,11 @@ export async function GET(request: Request) {
   // QUESTION：没有code怎么重定向到login页面
   if (code) {
     // const cookieStore = cookies()
-    const supabase = await createClient();
+    const supabaseAdmin = await createClient();
 
     try {
       // 从cookie中获取GitHub 的authorization Code，发送到supabase后端验证code的合法性
-      const { error } = await supabase.auth.exchangeCodeForSession(code)
+      const { error } = await supabaseAdmin.auth.exchangeCodeForSession(code)
 
       if (error) {
         console.error("Error exchanging code for session:", error)

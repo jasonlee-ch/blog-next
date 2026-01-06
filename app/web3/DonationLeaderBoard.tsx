@@ -4,8 +4,12 @@ import { useEffect, useState } from 'react';
 import { Donation } from '@/types/donation';
 import { BeggingContractConfig } from '@/web3/contract-config';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { formatEther, parseEther, isAddress } from 'viem';
-import { useWriteContract, useWaitForTransactionReceipt } from 'wagmi';
+import { formatEther, parseEther } from 'viem';
+import {
+  useWriteContract,
+  useWaitForTransactionReceipt,
+  useAccount,
+} from 'wagmi';
 import {
   Avatar,
   Box,
@@ -20,6 +24,7 @@ import {
   Badge,
 } from '@radix-ui/themes';
 import Loading from '@/components/loading';
+import { ConnectButton } from '@rainbow-me/rainbowkit';
 
 // 获取并处理捐赠数据
 async function getDonationData(): Promise<Donation<string>[]> {
@@ -40,7 +45,9 @@ export default function DonationLeaderboard() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const queryClient = useQueryClient();
 
-  const { data: hash, isPending, mutate, error } = useWriteContract();
+  const { isConnected } = useAccount();
+
+  const { data: hash, isPending, writeContract, error } = useWriteContract();
 
   const { isLoading: isConfirming, isSuccess: isConfirmed } =
     useWaitForTransactionReceipt({
@@ -62,7 +69,7 @@ export default function DonationLeaderboard() {
     const value = parseFloat(amount);
     if (isNaN(value) || value <= 0) return;
 
-    mutate({
+    writeContract({
       address: BeggingContractConfig.address,
       abi: BeggingContractConfig.abi,
       functionName: 'donate',
@@ -93,9 +100,16 @@ export default function DonationLeaderboard() {
           </Text>
           <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
             <Dialog.Trigger>
-              <Button size="2" variant="soft" color="ruby">
-                💰 我要打赏
-              </Button>
+              {isConnected ? (
+                <Button size="2" variant="soft" color="ruby">
+                  💰 我要打赏
+                </Button>
+              ) : (
+                // ✨ 重点： 增加rainbowkit的选择器前缀[data-rk]，保证样式正确 
+                <div data-rk>
+                  <ConnectButton showBalance={false}/>
+                </div>
+              )}
             </Dialog.Trigger>
             <Dialog.Content style={{ maxWidth: 450 }}>
               <Dialog.Title>感谢打赏🙇</Dialog.Title>

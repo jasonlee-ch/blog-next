@@ -18,6 +18,13 @@ type AuthContextType = {
   signInWithGitHub: () => Promise<{
     error: Error | null
   }>
+  signInWithWallet: (
+    address: string,
+    message: string,
+    signature: string,
+    ensName?: string | null,
+    ensAvatar?: string | null
+  ) => Promise<{ error: Error | null }>
   signUp: (
     email: string,
     password: string,
@@ -74,6 +81,25 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return { error }
   }
 
+  // 钱包登录
+  const signInWithWallet = async (address: string, message: string, signature: string, ensName?: string | null, ensAvatar?: string | null) => {
+    try {
+      const response = await fetch('/auth/wallet', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ address, message, signature, ensName, ensAvatar }),
+      });
+
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Wallet login failed');
+
+      const { error } = await supabase.auth.setSession(data.session);
+      return { error };
+    } catch (error: any) {
+      return { error };
+    }
+  }
+
   // 邮箱&密码注册
   // TODO-LJJ: 当使用了邮箱注册后，同时又使用相同的github账号注册，最终怎么存储
   const signUp = async (email: string, password: string) => {
@@ -89,7 +115,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signInWithGitHub, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signInWithGitHub, signInWithWallet, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   )

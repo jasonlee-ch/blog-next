@@ -1,8 +1,8 @@
-import { createClient } from "@/lib/supabase/server";
+import { getSupabaseClient } from "@/lib/supabase/client";
 import { PostEditor } from "./components/post-editor";
 
 export default async function CreatePostPage() {
-  const supabase = await createClient();
+  const supabase = await getSupabaseClient();
   
   // 获取分类用于下拉选择
   const { data: categories } = await supabase

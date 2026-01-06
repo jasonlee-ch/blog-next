@@ -1,4 +1,4 @@
-"use client";
+'use client';
 
 import {
   TabNav,
@@ -9,31 +9,48 @@ import {
   Box,
   Button,
   Dialog,
-} from "@radix-ui/themes";
-import { usePathname, useRouter } from "next/navigation";
-import { useAuth } from "@/providers/auth-provider";
-import NextLink from "next/link";
-import DonationLeaderboard from "@/app/web3/DonationLeaderBoard";
+  VisuallyHidden,
+} from '@radix-ui/themes';
+import { usePathname, useRouter } from 'next/navigation';
+import { useAuth } from '@/providers/auth-provider';
+import NextLink from 'next/link';
+import DonationLeaderboard from '@/app/web3/DonationLeaderBoard';
+import { useConnectModal } from '@rainbow-me/rainbowkit';
+import { useAccount } from 'wagmi';
+import { useEffect, useEffectEvent, useRef, useState } from 'react';
 
 const routes = [
   {
-    path: "/",
-    name: "首页",
+    path: '/',
+    name: '首页',
   },
   {
-    path: "/category",
-    name: "标签",
+    path: '/category',
+    name: '标签',
   },
   {
-    path: "/write",
-    name: "新笔记",
+    path: '/write',
+    name: '新笔记',
   },
 ];
 
 export default function Header() {
   const route = usePathname();
   const router = useRouter();
+
+  const [connectBtnClicked, setConnectBtnClicked] = useState(false);
   const { user, signOut, loading } = useAuth();
+
+  const tipButtonRef = useRef<HTMLButtonElement | null>(null);
+
+  const { connectModalOpen, openConnectModal } = useConnectModal();
+
+  const onConnectBtnClick = () => {
+    setConnectBtnClicked(true);
+    openConnectModal?.();
+  }
+
+  const { isConnected } = useAccount();
 
   const handleSignOut = async () => {
     await signOut();
@@ -41,6 +58,18 @@ export default function Header() {
     router.push('/');
     router.refresh();
   };
+
+  const onConnectSuc = useEffectEvent((modalClose: boolean) => {
+    if (modalClose && isConnected && connectBtnClicked) {
+      tipButtonRef.current?.click();
+      setConnectBtnClicked(prev => !prev);
+    }
+  })
+
+
+  useEffect(() => {
+    onConnectSuc(!connectModalOpen);
+  }, [connectModalOpen])
 
   return (
     <div className="sticky top-0 z-50 w-full dark:border-white/10 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-md supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-[#020617]/60 transition-colors duration-300">
@@ -53,17 +82,20 @@ export default function Header() {
           <Flex align="center" gap="3">
             {/* Logo 图标 */}
             <Box className="relative flex items-center justify-center w-8 h-8 rounded bg-gradient-to-br from-cyan-500 to-indigo-600 dark:from-cyan-600 dark:to-indigo-600 shadow-[0_0_15px_rgba(6,182,212,0.4)] dark:shadow-[0_0_15px_rgba(8,145,178,0.4)] transition-transform duration-300 group-hover:scale-110 group-hover:rotate-3">
-              <Text size="5" weight="bold" className="text-white font-mono">J</Text>
+              <Text size="5" weight="bold" className="text-white font-mono">
+                J
+              </Text>
             </Box>
-            
+
             {/* Logo 文字 - 适配亮暗色 */}
-            <Text 
-              size="5" 
-              weight="bold" 
+            <Text
+              size="5"
+              weight="bold"
               className="font-mono tracking-widest uppercase text-transparent bg-clip-text bg-gradient-to-r from-gray-800 via-cyan-600 to-gray-500 dark:from-white dark:via-cyan-100 dark:to-gray-400 drop-shadow-sm dark:drop-shadow-[0_0_10px_rgba(34,211,238,0.2)] transition-all group-hover:drop-shadow-md dark:group-hover:drop-shadow-[0_0_15px_rgba(34,211,238,0.4)]"
               style={{ fontFamily: 'var(--font-geist-mono)' }}
             >
-              Jason<span className="text-cyan-600 dark:text-cyan-400">.</span>Blog
+              Jason<span className="text-cyan-600 dark:text-cyan-400">.</span>
+              Blog
             </Text>
           </Flex>
         </NextLink>
@@ -72,13 +104,14 @@ export default function Header() {
           <TabNav.Root size="2" style={{ backgroundColor: 'transparent' }}>
             {routes.map(({ path, name }) => (
               <TabNav.Link key={path} asChild active={route === path}>
-                <NextLink 
+                <NextLink
                   href={path}
                   className={`
                     !bg-transparent transition-all duration-300
-                    ${route === path 
-                      ? '!text-cyan-600 !border-cyan-600 dark:!text-cyan-400 dark:!border-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.3)] dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]' 
-                      : 'text-gray-600 hover:text-gray-900 hover:!border-gray-300 dark:text-gray-400 dark:hover:text-white dark:hover:!border-gray-600'
+                    ${
+                      route === path
+                        ? '!text-cyan-600 !border-cyan-600 dark:!text-cyan-400 dark:!border-cyan-400 drop-shadow-[0_0_8px_rgba(6,182,212,0.3)] dark:drop-shadow-[0_0_8px_rgba(34,211,238,0.4)]'
+                        : 'text-gray-600 hover:text-gray-900 hover:!border-gray-300 dark:text-gray-400 dark:hover:text-white dark:hover:!border-gray-600'
                     }
                   `}
                 >
@@ -88,53 +121,90 @@ export default function Header() {
             ))}
           </TabNav.Root>
 
-          <Dialog.Root>
-            <Dialog.Trigger>
-              <Button variant="ghost" className="hover:bg-gray-100 dark:hover:bg-white/10 text-pink-600 hover:text-pink-700 dark:text-pink-400 dark:hover:text-pink-300 transition-colors">
-                打赏
-              </Button>
-            </Dialog.Trigger>
-            <Dialog.Content style={{ maxWidth: 500, padding: 0, overflow: 'hidden', height: 500 }}>
-              <DonationLeaderboard />
-            </Dialog.Content>
-          </Dialog.Root>
+          {isConnected ? (
+            <Dialog.Root>
+              <Dialog.Trigger>
+                <Button
+                  variant="ghost"
+                  className="hover:bg-gray-100 dark:hover:bg-white/10 text-pink-600 hover:text-pink-700 dark:text-pink-400 dark:hover:text-pink-300 transition-colors"
+                  ref={tipButtonRef}
+                >
+                  打赏
+                </Button>
+              </Dialog.Trigger>
+              <Dialog.Content
+                style={{
+                  maxWidth: 500,
+                  padding: 0,
+                  overflow: 'hidden',
+                  height: 500,
+                }}
+              >
+                <VisuallyHidden>
+                  <Dialog.Title>打赏榜</Dialog.Title>
+                </VisuallyHidden>
+                <div {...{ 'data-rk': '' }} style={{ height: '100%' }}>
+                  <DonationLeaderboard />
+                </div>
+              </Dialog.Content>
+            </Dialog.Root>
+          ) : (
+            <Button
+              variant="ghost"
+              className="hover:bg-gray-100 dark:hover:bg-white/10 text-pink-600 hover:text-pink-700 dark:text-pink-400 dark:hover:text-pink-300 transition-colors"
+              onClick={onConnectBtnClick}
+            >
+              打赏
+            </Button>
+          )}
 
           {/* <Box> */}
-            {loading ? (
-              <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-white/10 animate-pulse" />
-            ) : user ? (
-              <DropdownMenu.Root>
-                <DropdownMenu.Trigger>
-                  <button type="button" className="focus:outline-none rounded-full ring-2 ring-transparent hover:ring-cyan-500/50 transition-all duration-300">
-                    <Avatar
-                      src={user.user_metadata?.avatar_url}
-                      fallback={user.email ? user.email[0].toUpperCase() : "U"}
-                      radius="full"
-                      size="2"
-                      className="border border-gray-200 dark:border-white/10"
-                    />
-                  </button>
-                </DropdownMenu.Trigger>
-                <DropdownMenu.Content align="end" variant="soft">
-                  <Box p="2">
-                    <Text as="div" size="2" weight="bold">
-                      {user.user_metadata?.name || user.email}
-                    </Text>
-                    <Text as="div" size="1" color="gray">
-                      {user.email}
-                    </Text>
-                  </Box>
-                  <DropdownMenu.Separator />
-                  <DropdownMenu.Item color="red" onClick={handleSignOut}>
-                    退出登录
-                  </DropdownMenu.Item>
-                </DropdownMenu.Content>
-              </DropdownMenu.Root>
-            ) : (
-              <Button variant="ghost" className="hover:bg-gray-100 dark:hover:bg-white/10 text-cyan-600 hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200" asChild>
-                <NextLink href="/login">登录</NextLink>
-              </Button>
-            )}
+          {loading ? (
+            <div className="h-8 w-8 rounded-full bg-gray-200 dark:bg-white/10 animate-pulse" />
+          ) : user ? (
+            <DropdownMenu.Root>
+              <DropdownMenu.Trigger>
+                <button
+                  type="button"
+                  className="focus:outline-none rounded-full ring-2 ring-transparent hover:ring-cyan-500/50 transition-all duration-300"
+                >
+                  <Avatar
+                    src={user.user_metadata?.avatar_url}
+                    fallback={user.email ? user.email[0].toUpperCase() : 'U'}
+                    radius="full"
+                    size="2"
+                    className="border border-gray-200 dark:border-white/10"
+                  />
+                </button>
+              </DropdownMenu.Trigger>
+              <DropdownMenu.Content align="end" variant="soft">
+                <Box p="2">
+                  <Text as="div" size="2" weight="bold">
+                    {user.user_metadata?.name ||
+                      user.user_metadata?.wallet_address ||
+                      user.email}
+                  </Text>
+                  <Text as="div" size="1" color="gray">
+                    {user.user_metadata?.wallet_address
+                      ? 'Wallet User'
+                      : user.email}
+                  </Text>
+                </Box>
+                <DropdownMenu.Separator />
+                <DropdownMenu.Item color="red" onClick={handleSignOut}>
+                  退出登录
+                </DropdownMenu.Item>
+              </DropdownMenu.Content>
+            </DropdownMenu.Root>
+          ) : (
+            <Button
+              variant="ghost"
+              className="hover:bg-gray-100 dark:hover:bg-white/10 text-cyan-600 hover:text-cyan-700 dark:text-cyan-300 dark:hover:text-cyan-200"
+              asChild
+            >
+              <NextLink href="/login">登录</NextLink>
+            </Button>
+          )}
           {/* </Box> */}
         </Flex>
       </header>

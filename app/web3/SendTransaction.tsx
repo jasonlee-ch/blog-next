@@ -18,7 +18,7 @@ export default function SendTransaction() {
   const {
     data: hash,
     isPending,
-    mutate,
+    sendTransaction,
     error,
   } = useSendTransaction();
 
@@ -38,7 +38,7 @@ export default function SendTransaction() {
   async function submit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!isAddress(to)) return; // 增加一个防御性检查
-    mutate({ to, value: parseEther(value) });
+    sendTransaction({ to, value: parseEther(value) });
   }
 
   // 决定按钮是否应该被禁用

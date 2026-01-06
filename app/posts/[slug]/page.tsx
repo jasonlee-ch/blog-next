@@ -1,10 +1,8 @@
-import Link from 'next/link';
-import { ArrowLeft } from 'lucide-react';
 import { getSupabaseClient } from '@/lib/supabase/client';
-import type { Post, PostWithCategories } from '@/types';
+import type { PostWithCategories } from '@/types';
 import { formatDate } from '@/lib/utils';
 import { notFound } from 'next/navigation';
-import { Badge, Flex, Text } from '@radix-ui/themes';
+import { Badge, Flex } from '@radix-ui/themes';
 import MarkdownPreview, {
   EMarkdownPreviewMode,
 } from '@/components/markdown-preview-v2';
