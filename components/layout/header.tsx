@@ -39,16 +39,22 @@ export default function Header() {
   const router = useRouter();
 
   const [connectBtnClicked, setConnectBtnClicked] = useState(false);
+
   const { user, signOut, loading } = useAuth();
 
   const tipButtonRef = useRef<HTMLButtonElement | null>(null);
 
   const { connectModalOpen, openConnectModal } = useConnectModal();
 
+  const prevModalOpenRef = useRef(connectModalOpen);
+
+  const targetActionExecutedRef = useRef(false); // 防止重复执行目标操作（避免一次关闭触发多次）
+
   const onConnectBtnClick = () => {
     setConnectBtnClicked(true);
     openConnectModal?.();
-  }
+    targetActionExecutedRef.current = false; // 重置标志位
+  };
 
   const { isConnected } = useAccount();
 
@@ -59,18 +65,21 @@ export default function Header() {
     router.refresh();
   };
 
-  const onConnectSuc = useEffectEvent((modalClose: boolean) => {
-    // 用户在未连接状态，点击打赏拉起连接弹窗成功连接后，自动打开打赏弹窗
-    if (modalClose && isConnected && connectBtnClicked) {
-      tipButtonRef.current?.click();
-      setConnectBtnClicked(prev => !prev);
-    }
-  })
-
-
   useEffect(() => {
-    onConnectSuc(!connectModalOpen);
-  }, [connectModalOpen])
+    if (
+      prevModalOpenRef.current &&
+      !connectModalOpen &&
+      isConnected &&
+      connectBtnClicked &&
+      !targetActionExecutedRef.current // 未重复执行
+    ) {
+      tipButtonRef.current?.click();
+      // setConnectBtnClicked(prev => !prev);
+      targetActionExecutedRef.current = true; // 设置标志位
+    }
+    // 存储上一次的值
+    prevModalOpenRef.current = connectModalOpen;
+  }, [connectModalOpen, isConnected, connectBtnClicked]);
 
   return (
     <div className="sticky top-0 z-50 w-full dark:border-white/10 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-md supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-[#020617]/60 transition-colors duration-300">
