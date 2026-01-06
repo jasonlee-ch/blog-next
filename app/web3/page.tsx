@@ -16,13 +16,13 @@
 //   )
 // }
 
-import { useConnection } from "wagmi";
+import { useAccount } from "wagmi";
 import Connection from "./Connection";
 import WalletOptions from "./WalletOptions";
 import SendTransaction from "./SendTransaction";
 import DonationLeaderboard from "./DonationLeaderBoard";
 function ConnectWallet() {
-  const { isConnected } = useConnection();
+  const { isConnected } = useAccount();
   if (isConnected) return <Connection />;
   return <WalletOptions />;
 } 

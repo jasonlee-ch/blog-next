@@ -1,10 +1,10 @@
 "use client";
 
 import { Avatar, Box, Button, Card, Flex, Text } from '@radix-ui/themes';
-import { useConnection, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
+import { useAccount, useDisconnect, useEnsAvatar, useEnsName } from 'wagmi';
 
 export default function Connection() {
-  const { address } = useConnection();
+  const { address } = useAccount();
   const { disconnect } = useDisconnect();
   const { data: ensName } = useEnsName({ address });
   const { data: ensAvatar } = useEnsAvatar({

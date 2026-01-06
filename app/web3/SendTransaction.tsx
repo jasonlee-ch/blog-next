@@ -7,11 +7,11 @@ import {
   useSendTransaction,
   useWaitForTransactionReceipt,
   type BaseError,
-  useConnection,
+  useAccount,
 } from 'wagmi';
 
 export default function SendTransaction() {
-  const { chain } = useConnection();
+  const { chain } = useAccount();
   const [to, setTo] = useState('');
   const [value, setValue] = useState('');
 

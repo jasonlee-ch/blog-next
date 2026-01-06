@@ -60,6 +60,7 @@ export default function Header() {
   };
 
   const onConnectSuc = useEffectEvent((modalClose: boolean) => {
+    // 用户在未连接状态，点击打赏拉起连接弹窗成功连接后，自动打开打赏弹窗
     if (modalClose && isConnected && connectBtnClicked) {
       tipButtonRef.current?.click();
       setConnectBtnClicked(prev => !prev);

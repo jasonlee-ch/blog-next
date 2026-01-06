@@ -1,8 +1,6 @@
-import { createConfig, http } from 'wagmi'
-import { mainnet, sepolia } from 'wagmi/chains'
+import { http } from 'wagmi'
+import { sepolia } from 'wagmi/chains'
 import { PROVIDERS } from './providers';
-import { metaMask, injected } from 'wagmi/connectors';
-import { publicProvider } from 'wagmi/providers/public';
 import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 
 // 方法一：
