@@ -13,12 +13,14 @@ import {
   Card,
 } from '@radix-ui/themes';
 import { getSupabaseClient } from '@/lib/supabase/client';
-import { Category } from '@/types';
+import { Category, DefaultTheme } from '@/types';
 import MarkdownRenderer from '@/components/markdown-preview-v2';
 import rehypeSanitize from "rehype-sanitize";
 import dynamic from "next/dynamic";
 import { MultiSelect } from './multi-select';
 import { useToast } from '@/providers/toast-provider';
+import { useTheme } from 'next-themes';
+import { useMounted } from '@/hooks/use-mounted';
 
 const MDEditor = dynamic(
   () => import("@uiw/react-md-editor"),
@@ -34,6 +36,10 @@ export function PostEditor({ categories }: { categories: Category[] }) {
   const [categoryIds, setCategoryIds] = useState<string[]>([]);
   const [content, setContent] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  const { resolvedTheme } = useTheme();
+
+  const { mounted } = useMounted();
 
   const { showToast } = useToast();
 
@@ -196,6 +202,7 @@ export function PostEditor({ categories }: { categories: Category[] }) {
                 onChange={onMarkdownContentChange}
                 height="100%"
                 preview="edit"
+                data-color-mode={ mounted ? resolvedTheme as DefaultTheme : 'light' }
                 visibleDragbar={false}
                 extraCommands={[]}
                 // 避免xss攻击

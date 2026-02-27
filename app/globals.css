@@ -1,10 +1,12 @@
 @import "tailwindcss";
 @import "normalize.css";
 
-/* @tailwind base;
-@tailwind components; */
-@tailwind utilities;
+/* 
+* ⚠️ 注意: 如果希望在 Tailwind v4中使用css selector 作为dark mode的判断条件，需要使用@custom-variant，告诉tailwind v4，dark mode的判断条件是.dark和.dark *，否则dark mode的判断条件会失效
+*/
+@custom-variant dark (&&:where(.dark, .dark *));
 
+/* ⚠️ 注意: @layer base 定义的变量只能手动消费 */
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -66,6 +68,144 @@
     --border: 217.2 32.6% 17.5%;
     --input: 217.2 32.6% 17.5%;
     --ring: 212.7 26.8% 83.9%;
+    
+    /* 更新 Tailwind v4 @theme 变量 */
+    --color-background: 222.2 84% 4.9%;
+    --color-foreground: 210 40% 98%;
+    
+    --color-card: 222.2 84% 4.9%;
+    --color-card-foreground: 210 40% 98%;
+    
+    --color-popover: 222.2 84% 4.9%;
+    --color-popover-foreground: 210 40% 98%;
+    
+    --color-primary: 210 40% 98%;
+    --color-primary-foreground: 222.2 47.4% 11.2%;
+    
+    --color-secondary: 217.2 32.6% 17.5%;
+    --color-secondary-foreground: 210 40% 98%;
+    
+    --color-muted: 217.2 32.6% 17.5%;
+    --color-muted-foreground: 215 20.2% 65.1%;
+    
+    --color-accent: 217.2 32.6% 17.5%;
+    --color-accent-foreground: 210 40% 98%;
+    
+    --color-destructive: 0 62.8% 30.6%;
+    --color-destructive-foreground: 210 40% 98%;
+    
+    --color-border: 217.2 32.6% 17.5%;
+    --color-input: 217.2 32.6% 17.5%;
+    --color-ring: 212.7 26.8% 83.9%;
+  }
+}
+
+/* 
+ * ⚠️ 注意: @theme 定义的是tailwind的design tokens，tailwind会自动生成对应的工具类
+ * 如：--color-background 会生成 bg-background 工具类
+ */
+@theme {
+  /* Tailwind v4 颜色定义 - 直接使用 HSL 值 */
+  --color-background: 0 0% 100%;
+  --color-foreground: 222.2 84% 4.9%;
+  
+  --color-card: 0 0% 100%;
+  --color-card-foreground: 222.2 84% 4.9%;
+  
+  --color-popover: 0 0% 100%;
+  --color-popover-foreground: 222.2 84% 4.9%;
+  
+  --color-primary: 222.2 47.4% 11.2%;
+  --color-primary-foreground: 210 40% 98%;
+  
+  --color-secondary: 210 40% 96.1%;
+  --color-secondary-foreground: 222.2 47.4% 11.2%;
+  
+  --color-muted: 210 40% 96.1%;
+  --color-muted-foreground: 215.4 16.3% 46.9%;
+  
+  --color-accent: 210 40% 96.1%;
+  --color-accent-foreground: 222.2 47.4% 11.2%;
+  
+  --color-destructive: 0 84.2% 60.2%;
+  --color-destructive-foreground: 210 40% 98%;
+  
+  --color-border: 214.3 31.8% 91.4%;
+  --color-input: 214.3 31.8% 91.4%;
+  --color-ring: 222.2 84% 4.9%;
+  
+  --color-dark-header: rgb(2 6 23 / 0.8);
+  --color-dark-header-backdrop: rgb(2 6 23 / 0.6);
+
+  --radius-lg: 0.5rem;
+  --radius-md: calc(0.5rem - 2px);
+  --radius-sm: calc(0.5rem - 4px);
+}
+
+/* 为 Tailwind v4 定义自定义工具类，使用 CSS 变量 */
+@layer utilities {
+  /* flex-center 工具类（从 tailwind.config.ts 迁移而来） */
+  .flex-center {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .text-foreground {
+    color: hsl(var(--foreground));
+  }
+  .bg-background {
+    background-color: hsl(var(--background));
+  }
+  .bg-card {
+    background-color: hsl(var(--card));
+  }
+  .text-card-foreground {
+    color: hsl(var(--card-foreground));
+  }
+  .bg-popover {
+    background-color: hsl(var(--popover));
+  }
+  .text-popover-foreground {
+    color: hsl(var(--popover-foreground));
+  }
+  .bg-primary {
+    background-color: hsl(var(--primary));
+  }
+  .text-primary-foreground {
+    color: hsl(var(--primary-foreground));
+  }
+  .bg-secondary {
+    background-color: hsl(var(--secondary));
+  }
+  .text-secondary-foreground {
+    color: hsl(var(--secondary-foreground));
+  }
+  .bg-muted {
+    background-color: hsl(var(--muted));
+  }
+  .text-muted-foreground {
+    color: hsl(var(--muted-foreground));
+  }
+  .bg-accent {
+    background-color: hsl(var(--accent));
+  }
+  .text-accent-foreground {
+    color: hsl(var(--accent-foreground));
+  }
+  .bg-destructive {
+    background-color: hsl(var(--destructive));
+  }
+  .text-destructive-foreground {
+    color: hsl(var(--destructive-foreground));
+  }
+  .border-border {
+    border-color: hsl(var(--border));
+  }
+  .border-input {
+    border-color: hsl(var(--input));
+  }
+  .ring-ring {
+    --tw-ring-color: hsl(var(--ring));
   }
 }
 
@@ -83,14 +223,14 @@
 @layer components {
   .markdown-preview {
     /* 全局容器样式 */
-    @apply px-4 py-6 text-gray-800 dark:text-gray-200 leading-relaxed;
+    @apply px-4 py-6 text-foreground leading-relaxed;
 
     /* 嵌套：标题样式（h1-h6 直接嵌套在 .markdown 下） */
     h1 {
-      @apply text-3xl md:text-4xl font-bold mt-8 mb-4 border-b border-gray-200 dark:border-gray-700 pb-2;
+      @apply text-3xl md:text-4xl font-bold mt-8 mb-4 border-b border-border pb-2;
     }
     h2 {
-      @apply text-2xl md:text-3xl font-semibold mt-7 mb-3 border-b border-gray-200 dark:border-gray-700 pb-1;
+      @apply text-2xl md:text-3xl font-semibold mt-7 mb-3 border-b border-border pb-1;
     }
     h3 {
       @apply text-xl md:text-2xl font-semibold mt-6 mb-3;
@@ -110,7 +250,7 @@
 
     /* 嵌套：链接样式 */
     a {
-      @apply text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 underline decoration-1 underline-offset-2;
+      @apply font-medium text-primary underline underline-offset-4;
     }
 
     /* 嵌套：粗体、斜体样式 */
@@ -118,7 +258,7 @@
       @apply font-bold;
     }
     em {
-      @apply italic text-gray-700 dark:text-gray-300;
+      @apply italic text-muted-foreground;
     }
 
     /* 嵌套：列表样式（包含嵌套列表） */
@@ -143,45 +283,45 @@
 
     /* 嵌套：引用样式 */
     blockquote {
-      @apply my-5 pl-4 border-l-4 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800/50 py-2 px-3 italic text-gray-700 dark:text-gray-300;
+      @apply my-5 pl-4 border-l-4 border-border bg-muted py-2 px-3 italic text-muted-foreground;
     }
 
     /* 嵌套：代码块 + 行内代码样式 */
     pre {
-      @apply my-5 p-4 rounded-lg bg-gray-900 dark:bg-gray-800 overflow-x-auto;
+      @apply my-5 p-4 rounded-lg bg-muted overflow-x-auto;
 
       /* 嵌套：代码块内的 code 标签 */
       code {
-        @apply text-sm text-gray-100 dark:text-gray-100;
+        @apply text-sm text-foreground font-mono;
       }
     }
     /* 行内代码（p/li 内的 code 标签） */
     p > code,
     li > code {
-      @apply bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-200 px-1.5 py-0.5 rounded text-sm;
+      @apply bg-muted text-foreground px-1.5 py-0.5 rounded text-sm font-mono;
     }
 
     /* 嵌套：表格样式 */
     table {
-      @apply my-6 w-full border-collapse border border-gray-300 dark:border-gray-700;
+      @apply my-6 w-full border-collapse border border-border;
 
       /* 嵌套：表头 th */
       th {
-        @apply bg-gray-100 dark:bg-gray-800 border border-gray-300 dark:border-gray-700 px-4 py-2 font-semibold text-left;
+        @apply bg-muted border border-border px-4 py-2 font-semibold text-left;
       }
       /* 嵌套：表格单元格 td */
       td {
-        @apply border border-gray-300 dark:border-gray-700 px-4 py-2;
+        @apply border border-border px-4 py-2;
       }
       /* 嵌套：偶数行背景 */
       tr:nth-child(even) {
-        @apply bg-gray-50 dark:bg-gray-900/50;
+        @apply bg-muted/50;
       }
     }
 
     /* 嵌套：分隔线样式 */
     hr {
-      @apply my-8 border-gray-200 dark:border-gray-700;
+      @apply my-8 border-border;
     }
 
     /* 嵌套：图片样式 */

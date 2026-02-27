@@ -2,9 +2,10 @@
 
 import type React from "react"
 
-import { createContext, useContext, useEffect, useState } from "react"
+import { createContext, useCallback, useContext, useEffect, useState } from "react"
 import { getSupabaseClient } from "@/lib/supabase/client"
-import type { User } from "@supabase/supabase-js"
+import type { Session, User } from "@supabase/supabase-js"
+import { useDisconnect } from "wagmi"
 
 type AuthContextType = {
   user: User | null
@@ -18,13 +19,8 @@ type AuthContextType = {
   signInWithGitHub: () => Promise<{
     error: Error | null
   }>
-  signInWithWallet: (
-    address: string,
-    message: string,
-    signature: string,
-    ensName?: string | null,
-    ensAvatar?: string | null
-  ) => Promise<{ error: Error | null }>
+  // 供 RainbowKit 认证适配器在 verify 成功后调用，将 session 同步到 Supabase 客户端
+  setSessionFromWallet: (session: Session) => Promise<void>
   signUp: (
     email: string,
     password: string,
@@ -41,6 +37,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true)
   const supabase = getSupabaseClient()
 
+  const { disconnect } = useDisconnect();
+
   useEffect(() => {
     // 初始化时检查用户状态
     supabase.auth.getSession().then(({ data: { session } }: any) => {
@@ -51,8 +49,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event: any, session: any) => {
-      // 根据
-      console.log("Auth state changed:", session)
+      console.log("Auth state changed:", _event, session)
       setUser(session?.user ?? null)
       setLoading(false)
     })
@@ -61,6 +58,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       subscription.unsubscribe()
     }
   }, [])
+
   // 邮箱&密码登录
   const signIn = async (email: string, password: string) => {
     const { error } = await supabase.auth.signInWithPassword({
@@ -69,36 +67,27 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     return { error }
   }
+
   // GitHub 登录
   const signInWithGitHub = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "github",
       options: {
         redirectTo: `${window.location.origin}/auth/callback`,
-        scopes: "read:user user:email", // 明确请求用户邮箱权限
+        scopes: "read:user user:email",
       },
     })
     return { error }
   }
 
-  // 钱包登录
-  const signInWithWallet = async (address: string, message: string, signature: string, ensName?: string | null, ensAvatar?: string | null) => {
-    try {
-      const response = await fetch('/auth/wallet', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ address, message, signature, ensName, ensAvatar }),
-      });
-
-      const data = await response.json();
-      if (!response.ok) throw new Error(data.error || 'Wallet login failed');
-
-      const { error } = await supabase.auth.setSession(data.session);
-      return { error };
-    } catch (error: any) {
-      return { error };
+  // 供 RainbowKit 认证适配器调用：将后端生成的 session 同步到前端 Supabase 客户端
+  const setSessionFromWallet = useCallback(async (session: Session) => {
+    const { error } = await supabase.auth.setSession(session)
+    if (error) {
+      console.error("Failed to set wallet session:", error)
+      throw error
     }
-  }
+  }, [supabase])
 
   // 邮箱&密码注册
   // TODO-LJJ: 当使用了邮箱注册后，同时又使用相同的github账号注册，最终怎么存储
@@ -109,13 +98,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     })
     return { error }
   }
+
   // logout
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     await supabase.auth.signOut()
-  }
+    disconnect()
+  }, [supabase, disconnect])
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signInWithGitHub, signInWithWallet, signUp, signOut }}>
+    <AuthContext.Provider value={{ user, loading, signIn, signInWithGitHub, setSessionFromWallet, signUp, signOut }}>
       {children}
     </AuthContext.Provider>
   )

@@ -25,6 +25,7 @@ import {
 } from '@radix-ui/themes';
 import Loading from '@/components/loading';
 import { ConnectButton } from '@rainbow-me/rainbowkit';
+import { useToast } from '@/providers/toast-provider';
 
 // 获取并处理捐赠数据
 async function getDonationData(): Promise<Donation<string>[]> {
@@ -44,6 +45,7 @@ export default function DonationLeaderboard() {
   const [amount, setAmount] = useState('');
   const [dialogOpen, setDialogOpen] = useState(false);
   const queryClient = useQueryClient();
+  const { showToast } = useToast();
 
   const { isConnected } = useAccount();
 
@@ -61,6 +63,7 @@ export default function DonationLeaderboard() {
       // eslint-disable-next-line react-hooks/set-state-in-effect
       setDialogOpen(false);
       setAmount('');
+      showToast('感谢大佬的打赏🙇', 'success');
     }
   }, [isConfirmed]);
 

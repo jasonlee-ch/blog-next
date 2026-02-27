@@ -17,7 +17,8 @@ import NextLink from 'next/link';
 import DonationLeaderboard from '@/app/web3/DonationLeaderBoard';
 import { useConnectModal } from '@rainbow-me/rainbowkit';
 import { useAccount } from 'wagmi';
-import { useEffect, useEffectEvent, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { ThemeToggle } from '@/components/theme-toggle';
 
 const routes = [
   {
@@ -82,7 +83,7 @@ export default function Header() {
   }, [connectModalOpen, isConnected, connectBtnClicked]);
 
   return (
-    <div className="sticky top-0 z-50 w-full dark:border-white/10 bg-white/80 dark:bg-[#020617]/80 backdrop-blur-md supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-[#020617]/60 transition-colors duration-300">
+    <div className="sticky top-0 z-50 w-full dark:border-white/10 bg-white/80 dark:bg-dark-header backdrop-blur-md supports-backdrop-filter:bg-white/60 dark:supports-backdrop-filter:bg-dark-header-backdrop transition-colors duration-300">
       {/* 顶部科幻光效线条 - 调整透明度适配亮色 */}
       <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-cyan-500/50 to-transparent opacity-50 dark:opacity-100" />
       <div className="absolute -bottom-px left-0 right-0 h-px bg-gradient-to-r from-transparent via-purple-500/20 to-transparent" />
@@ -161,12 +162,12 @@ export default function Header() {
           ) : (
             <Button
               variant="ghost"
-              className="hover:bg-gray-100 dark:hover:bg-white/10 text-pink-600 hover:text-pink-700 dark:text-pink-400 dark:hover:text-pink-300 transition-colors"
               onClick={onConnectBtnClick}
             >
               打赏
             </Button>
           )}
+          <ThemeToggle></ThemeToggle>
 
           {/* <Box> */}
           {loading ? (

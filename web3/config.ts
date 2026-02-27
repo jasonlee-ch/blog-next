@@ -19,7 +19,9 @@ import { getDefaultConfig } from '@rainbow-me/rainbowkit';
 // })
 
 export const config = getDefaultConfig({
+  
    appName: 'next-blog',
+  //  注意：所有依赖 WalletConnect 的 dApp 现在都需要从 WalletConnect Cloud 获取一个 projectId。
    projectId: '72fb972dd82a464f87a1cd1d97b7e79c',
    chains: [sepolia],
    transports: {

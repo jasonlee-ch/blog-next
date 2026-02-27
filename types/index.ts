@@ -32,3 +32,6 @@ export type Post = {
 export type PostWithCategories = Post & {
   categories: Category[];
 };
+
+
+export type DefaultTheme = 'light' | 'dark';

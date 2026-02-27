@@ -3,7 +3,7 @@
 import { useState } from 'react';
 import { getSupabaseClient } from '@/lib/supabase/client';
 import { useRouter } from 'next/navigation';
-import { Button, TextField, Text, Flex, Dialog, TextArea } from '@radix-ui/themes';
+import { Button, TextField, Text, Flex, Dialog, TextArea, Box, Card } from '@radix-ui/themes';
 import { Category } from '@/types';
 import { PlusIcon } from '@radix-ui/react-icons';
 import { useToast } from '@/providers/toast-provider';
@@ -58,9 +58,12 @@ export default function CreateCategory({
   return (
     <Dialog.Root open={isOpen} onOpenChange={setIsOpen}>
       <Dialog.Trigger>
-        <button className="border border-gray-200 rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow bg-white flex items-center justify-center cursor-pointer">
-          <PlusIcon height={30} width={30}></PlusIcon>
-        </button>
+        <Card className="rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow flex">
+          {/* <button className="border border-gray-200 dark:!text-white rounded-lg p-5 shadow-sm hover:shadow-md transition-shadow bg-white flex items-center justify-center cursor-pointer"> */}
+          <button className="border-none flex items-center justify-center cursor-pointer w-full h-full"> 
+            <PlusIcon height={30} width={30}></PlusIcon>
+          </button>
+        </Card>
       </Dialog.Trigger>
       <Dialog.Content>
         <Dialog.Title className="text-xl font-bold mb-4">创建标签</Dialog.Title>
